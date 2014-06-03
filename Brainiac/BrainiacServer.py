@@ -13,13 +13,17 @@ from geventwebsocket.handler import WebSocketHandler
 
 tfolder = os.path.join (os.path.dirname (os.path.abspath (__file__)), 'templates')
 sfolder = os.path.join (os.path.dirname (os.path.abspath (__file__)), 'static')
-app = Flask ('WatchyServer', template_folder=tfolder, static_folder=sfolder)
+app = Flask (__name__, template_folder=tfolder, static_folder=sfolder)
 
-app.route ('/')
+@app.route ("/")
 def index ():
     return render_template ('index.html')
 
-class BainiacServer:
+@app.route ("/deps/<path:path>")
+def dependancies (path):
+    return app.send_static_file (path)
+
+class BainiacApp:
     def __init__ (self, bind, port):
         self.bind = bind
         self.port = port
@@ -28,8 +32,7 @@ class BainiacServer:
         try:
             ServerUtil.info ('WSGIServer:[gevent] starting http://%s:%i/' \
                              % (self.bind, self.port))
-            http_server = WSGIServer ((self.bind, self.ort),
-                                      app, handler_class = WebSocketHandler)
+            http_server = WSGIServer ((self.bind, self.port), app)
             http_server.serve_forever ()
         except KeyboardInterrupt:
             ServerUtil.warning ('Caught keyboard interupt stopping')

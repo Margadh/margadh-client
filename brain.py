@@ -6,6 +6,7 @@ import logging
 import optparse
 import traceback
 
+from Brainiac import BrainiacServer
 from ConfigParser import RawConfigParser as CParser
 
 def printVersion ():
@@ -62,6 +63,7 @@ def serverMain ():
         formatter = logging.Formatter (form)
         consoleHandler.setFormatter (formatter)
         rootLogger.addHandler (consoleHandler)
+    BrainiacServer.BainiacApp (rbind, rport).listen ()
 
 if __name__ == "__main__":
     serverMain ()
